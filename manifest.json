@@ -1,0 +1,16 @@
+{
+  "name": "BrasApp - Gestão de Espetinho",
+  "short_name": "BrasApp",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#0D0905",
+  "theme_color": "#FF5722",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/9341/9341644.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
