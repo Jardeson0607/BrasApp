@@ -22,6 +22,7 @@
 html,body{height:100%;overflow:hidden}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column}
 
+/* LOGIN */
 #login-screen{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem}
 .login-brand{font-family:'Bebas Neue',sans-serif;font-size:3.5rem;letter-spacing:3px;background:linear-gradient(135deg,var(--fire3),var(--fire2),var(--fire));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;margin-bottom:.2rem}
 .login-sub{font-size:.7rem;color:var(--text3);letter-spacing:3px;text-transform:uppercase;text-align:center;margin-bottom:2.5rem}
@@ -202,13 +203,15 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .cfg-row:last-child{border-bottom:none}
 .cfg-label{font-size:.9rem;font-weight:600;color:var(--text)}
 .cfg-sub{font-size:.72rem;color:var(--text3);margin-top:.15rem}
-@media(min-width:600px){.mesas-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}.metric-grid{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:600px){
+  .mesas-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+  .metric-grid{grid-template-columns:repeat(4,1fr)}
+}
 @media(max-width:340px){.form-2col{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-brand">🔥 BrasApp</div>
   <div class="login-sub">Gestão de Espetinho</div>
@@ -216,10 +219,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <div class="login-title">Quem está acessando?</div>
     <div class="login-roles">
       <div class="role-btn on" id="rb-dono" onclick="selRole('dono')">
-        <div class="role-icon">👑</div><div class="role-lbl">Dono</div>
+        <div class="role-icon">👑</div>
+        <div class="role-lbl">Dono</div>
       </div>
       <div class="role-btn" id="rb-func" onclick="selRole('funcionario')">
-        <div class="role-icon">👷</div><div class="role-lbl">Funcionário</div>
+        <div class="role-icon">👷</div>
+        <div class="role-lbl">Funcionário</div>
       </div>
     </div>
     <div class="lfield">
@@ -228,11 +233,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     </div>
     <div class="login-err" id="login-err"></div>
     <button class="btn-login" onclick="doLogin()">Entrar</button>
-    <div class="login-hint">Dono: acesso total · Funcionário: só mesas</div>
+    <div class="login-hint" id="login-hint-txt">Dono: acesso total · Funcionário: só mesas</div>
   </div>
 </div>
 
-<!-- HEADER -->
 <div class="app-header">
   <div class="header-inner">
     <div>
@@ -252,7 +256,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   </div>
 </div>
 
-<!-- PAGES -->
 <div class="app-main">
   <div id="pg-mesas" class="page active">
     <div class="pg-header" style="padding-top:.2rem">
@@ -270,7 +273,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   <div id="pg-config" class="page"><div id="config-page-content"></div></div>
 </div>
 
-<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <button class="nav-item active" id="nav-mesas" onclick="goPage('mesas',this)">
     <div class="nav-bar"></div><div class="nav-icon">🪑</div><div class="nav-label">Mesas</div>
@@ -286,46 +288,65 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   </button>
 </nav>
 
-<!-- OVERLAYS -->
 <div class="overlay" id="ov-mesa" onclick="closeSelf(this)">
-  <div class="sheet"><div class="sh-handle"></div>
-    <div class="sh-header"><div class="sh-title" id="sh-mesa-title">Mesa 1</div><div class="sh-close" onclick="closeOv('ov-mesa')">✕</div></div>
+  <div class="sheet">
+    <div class="sh-handle"></div>
+    <div class="sh-header">
+      <div class="sh-title" id="sh-mesa-title">Mesa 1</div>
+      <div class="sh-close" onclick="closeOv('ov-mesa')">✕</div>
+    </div>
     <div class="sh-body" id="sh-mesa-body"></div>
   </div>
 </div>
+
 <div class="overlay" id="ov-prod" onclick="closeSelf(this)">
-  <div class="sheet"><div class="sh-handle"></div>
-    <div class="sh-header"><div class="sh-title" id="sh-prod-title">Novo Produto</div><div class="sh-close" onclick="closeOv('ov-prod')">✕</div></div>
+  <div class="sheet">
+    <div class="sh-handle"></div>
+    <div class="sh-header">
+      <div class="sh-title" id="sh-prod-title">Novo Produto</div>
+      <div class="sh-close" onclick="closeOv('ov-prod')">✕</div>
+    </div>
     <div class="sh-body" id="sh-prod-body"></div>
   </div>
 </div>
+
 <div class="overlay" id="ov-fechar" onclick="closeSelf(this)">
-  <div class="sheet"><div class="sh-handle"></div>
-    <div class="sh-header"><div class="sh-title" id="sh-fechar-title">Fechar Conta</div><div class="sh-close" onclick="closeOv('ov-fechar')">✕</div></div>
+  <div class="sheet">
+    <div class="sh-handle"></div>
+    <div class="sh-header">
+      <div class="sh-title" id="sh-fechar-title">Fechar Conta</div>
+      <div class="sh-close" onclick="closeOv('ov-fechar')">✕</div>
+    </div>
     <div class="sh-body" id="sh-fechar-body"></div>
   </div>
 </div>
+
 <div class="overlay" id="ov-senha" onclick="closeSelf(this)">
-  <div class="sheet"><div class="sh-handle"></div>
-    <div class="sh-header"><div class="sh-title" id="sh-senha-title">Alterar Senha</div><div class="sh-close" onclick="closeOv('ov-senha')">✕</div></div>
+  <div class="sheet">
+    <div class="sh-handle"></div>
+    <div class="sh-header">
+      <div class="sh-title" id="sh-senha-title">Alterar Senha</div>
+      <div class="sh-close" onclick="closeOv('ov-senha')">✕</div>
+    </div>
     <div class="sh-body" id="sh-senha-body"></div>
   </div>
 </div>
 
 <script>
 // ================================================================
-// SUPABASE CONFIG
+// SUPABASE CONFIG — suas credenciais já estão aqui ✅
 // ================================================================
 const SUPABASE_URL = 'https://kieejgcxljtiybkjedfw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_VtPJ0leGH9WmkVFA5a3Fkg_juJ1zts1';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  realtime: { params: { eventsPerSecond: 20 } }
+});
 
 // ================================================================
 // STATE
 // ================================================================
 let currentRole = null;
 let S = { produtos: [], mesas: {}, fechamentos: [], senhas: { dono: '1234', funcionario: '0000' } };
-
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8) }
 
 // ================================================================
@@ -346,58 +367,73 @@ function showLoading(msg = 'Carregando...') {
 function hideLoading() { const el = document.getElementById('fb-loading'); if (el) el.remove() }
 
 // ================================================================
-// INIT SUPABASE
+// INIT SUPABASE — carrega dados + ativa realtime
 // ================================================================
 async function initSupabase() {
   showLoading('Conectando ao banco de dados...');
   try {
-    // Carregar senhas
+    // --- Senhas ---
     const { data: cfgData } = await sb.from('config').select('dados').eq('id', 'senhas').single();
-    if (cfgData) { S.senhas = cfgData.dados }
-    else { await sb.from('config').insert({ id: 'senhas', dados: S.senhas }) }
+    if (cfgData) S.senhas = cfgData.dados;
+    else await sb.from('config').insert({ id: 'senhas', dados: S.senhas });
 
-    // Carregar produtos
-    const { data: prods } = await sb.from('produtos').select('*');
+    // --- Produtos ---
+    const { data: prods, error: eprod } = await sb.from('produtos').select('*');
+    if (eprod) throw eprod;
     S.produtos = prods || [];
     if (S.produtos.length === 0) await seedProdutos();
 
-    // Carregar mesas
-    const { data: mesas } = await sb.from('mesas').select('*');
+    // --- Mesas ---
+    const { data: mesas, error: emesa } = await sb.from('mesas').select('*');
+    if (emesa) throw emesa;
     S.mesas = {};
     (mesas || []).forEach(m => { S.mesas[m.id] = { status: m.status, pedidos: m.pedidos || [] } });
 
-    // Carregar fechamentos
-    const { data: fec } = await sb.from('fechamentos').select('*').order('data', { ascending: false });
+    // --- Fechamentos ---
+    const { data: fec, error: efec } = await sb.from('fechamentos').select('*').order('data', { ascending: false });
+    if (efec) throw efec;
     S.fechamentos = fec || [];
 
-    // Realtime: produtos
-    sb.channel('produtos').on('postgres_changes', { event: '*', schema: 'public', table: 'produtos' }, async () => {
-      const { data } = await sb.from('produtos').select('*');
-      S.produtos = data || [];
-      renderProdutos(); renderMesaSheetIfOpen();
-    }).subscribe();
+    // ---- REALTIME: usando broadcast channel único por tabela ----
+    // Produtos
+    sb.channel('db-produtos')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'produtos' }, async () => {
+        const { data } = await sb.from('produtos').select('*');
+        S.produtos = data || [];
+        renderProdutos();
+        renderMesaSheetIfOpen();
+      }).subscribe((status) => {
+        if (status === 'SUBSCRIBED') console.log('✅ Realtime produtos ativo');
+      });
 
-    // Realtime: mesas
-    sb.channel('mesas').on('postgres_changes', { event: '*', schema: 'public', table: 'mesas' }, async () => {
-      const { data } = await sb.from('mesas').select('*');
-      S.mesas = {};
-      (data || []).forEach(m => { S.mesas[m.id] = { status: m.status, pedidos: m.pedidos || [] } });
-      renderMesas(); renderMesaSheetIfOpen();
-    }).subscribe();
+    // Mesas
+    sb.channel('db-mesas')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mesas' }, async () => {
+        const { data } = await sb.from('mesas').select('*');
+        S.mesas = {};
+        (data || []).forEach(m => { S.mesas[m.id] = { status: m.status, pedidos: m.pedidos || [] } });
+        renderMesas();
+        renderMesaSheetIfOpen();
+      }).subscribe((status) => {
+        if (status === 'SUBSCRIBED') console.log('✅ Realtime mesas ativo');
+      });
 
-    // Realtime: fechamentos
-    sb.channel('fechamentos').on('postgres_changes', { event: '*', schema: 'public', table: 'fechamentos' }, async () => {
-      const { data } = await sb.from('fechamentos').select('*').order('data', { ascending: false });
-      S.fechamentos = data || [];
-      if (document.getElementById('dash-body')) renderDash();
-    }).subscribe();
+    // Fechamentos
+    sb.channel('db-fechamentos')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'fechamentos' }, async () => {
+        const { data } = await sb.from('fechamentos').select('*').order('data', { ascending: false });
+        S.fechamentos = data || [];
+        if (document.getElementById('dash-body')) renderDash();
+      }).subscribe((status) => {
+        if (status === 'SUBSCRIBED') console.log('✅ Realtime fechamentos ativo');
+      });
 
     hideLoading();
     renderMesas();
   } catch (e) {
     hideLoading();
-    toast('Erro ao conectar ao banco: ' + e.message, '❌');
-    console.error(e);
+    console.error('Erro Supabase:', e);
+    toast('Erro ao conectar: ' + (e.message || JSON.stringify(e)), '❌');
   }
 }
 
@@ -415,37 +451,57 @@ async function seedProdutos() {
     ['Creme de Papaya', 10.00, 'Sobremesas'], ['Pudim', 8.00, 'Sobremesas']
   ];
   const rows = seeds.map(([nome, preco, cat]) => ({ id: uid(), nome, preco, cat }));
-  const { data } = await sb.from('produtos').insert(rows).select();
-  S.produtos = data || [];
+  const { data, error } = await sb.from('produtos').insert(rows).select();
+  if (!error) S.produtos = data || [];
 }
 
 // ================================================================
 // SUPABASE: ESCRITA
 // ================================================================
 async function sbSaveProduto(p) {
-  await sb.from('produtos').upsert({ id: p.id, nome: p.nome, preco: p.preco, cat: p.cat });
+  const { error } = await sb.from('produtos').upsert({ id: p.id, nome: p.nome, preco: p.preco, cat: p.cat });
+  if (error) { toast('Erro ao salvar produto', '❌'); console.error(error) }
 }
 async function sbDeleteProduto(id) {
-  await sb.from('produtos').delete().eq('id', id);
+  const { error } = await sb.from('produtos').delete().eq('id', id);
+  if (error) { toast('Erro ao remover produto', '❌'); console.error(error) }
 }
 async function sbSaveMesa(id, dados) {
-  await sb.from('mesas').upsert({ id: String(id), status: dados.status, pedidos: dados.pedidos });
+  // IMPORTANTE: usa upsert com id como string — mesma chave usada na leitura
+  const { error } = await sb.from('mesas').upsert({
+    id: String(id),
+    status: dados.status,
+    pedidos: dados.pedidos
+  });
+  if (error) { toast('Erro ao salvar mesa', '❌'); console.error(error) }
 }
 async function sbAddFechamento(f) {
-  await sb.from('fechamentos').insert({
-    mesa_id: f.mesaId, total: f.total, pagamento: f.pagamento,
-    itens: f.itens, data: f.data
+  // IMPORTANTE: coluna é "mesaId" com aspas na tabela (criada assim no SQL)
+  const { error } = await sb.from('fechamentos').insert({
+    mesaId: f.mesaId,
+    total: f.total,
+    pagamento: f.pagamento,
+    itens: f.itens,
+    data: f.data
   });
+  if (error) {
+    // Tenta snake_case como fallback, pois às vezes o Supabase normaliza
+    const { error: e2 } = await sb.from('fechamentos').insert({
+      mesa_id: f.mesaId, total: f.total, pagamento: f.pagamento, itens: f.itens, data: f.data
+    });
+    if (e2) { toast('Erro ao fechar conta', '❌'); console.error(e2) }
+  }
 }
 async function sbSaveSenhas() {
   await sb.from('config').upsert({ id: 'senhas', dados: S.senhas });
 }
 async function sbLimparFechamentos() {
-  await sb.from('fechamentos').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+  // Deleta todos os registros — usa gt id vazio como workaround para delete sem where
+  await sb.from('fechamentos').delete().gte('total', 0);
 }
 
 // ================================================================
-// HELPERS
+// HELPER: re-renderiza sheet da mesa aberta ao receber update
 // ================================================================
 function renderMesaSheetIfOpen() {
   if (aMesa && document.getElementById('ov-mesa')?.classList.contains('open')) {
@@ -570,14 +626,16 @@ async function addItem(mId, pId) {
   const m = getMesa(mId); m.status = 'ocupada';
   const ex = m.pedidos.find(p => p.pid === pId);
   if (ex) ex.qty++; else m.pedidos.push({ pid: pId, qty: 1 });
-  await sbSaveMesa(mId, m); renderMesaSheet(mId); renderMesas();
+  await sbSaveMesa(mId, m);
+  renderMesaSheet(mId); renderMesas();
 }
 async function chgQty(mId, pId, d) {
   const m = getMesa(mId); const p = m.pedidos.find(x => x.pid === pId); if (!p) return;
   p.qty += d;
   if (p.qty <= 0) m.pedidos = m.pedidos.filter(x => x.pid !== pId);
   if (m.pedidos.length === 0) m.status = 'livre';
-  await sbSaveMesa(mId, m); renderMesaSheet(mId); renderMesas();
+  await sbSaveMesa(mId, m);
+  renderMesaSheet(mId); renderMesas();
 }
 
 // ================================================================
@@ -609,8 +667,7 @@ function selPag(p) {
 async function confirmar() {
   if (!pSel) { toast('Selecione o pagamento!', '⚠️'); return }
   const m = getMesa(fId); const tot = calcTotal(m.pedidos);
-  const fechamento = { mesaId: fId, total: tot, pagamento: pSel, itens: [...m.pedidos], data: new Date().toISOString() };
-  await sbAddFechamento(fechamento);
+  await sbAddFechamento({ mesaId: fId, total: tot, pagamento: pSel, itens: [...m.pedidos], data: new Date().toISOString() });
   await sbSaveMesa(fId, { status: 'livre', pedidos: [] });
   closeOv('ov-fechar'); renderMesas();
   toast(`Mesa ${fId} fechada! R$${tot.toFixed(2)}`, { pix: '💠', cartao: '💳', dinheiro: '💵' }[pSel]);
@@ -636,7 +693,7 @@ function renderProdutos() {
   let prods = S.produtos.filter(p => (!q || p.nome.toLowerCase().includes(q)) && (!catA || p.cat === catA));
   const list = document.getElementById('prod-list');
   if (!prods.length) { list.innerHTML = `<div class="empty"><span class="empty-icon">📦</span><div style="font-size:.88rem">Nenhum produto encontrado</div></div>`; return }
-  list.innerHTML = prods.map(p => `<div class="prod-item"><div style="flex:1"><div class="prod-nome">${p.nome}</div><div style="margin-top:.25rem"><span class="badge badge-fire" style="font-size:.63rem;padding:.18rem .5rem">${p.cat}</span></div></div><div style="display:flex;align-items:center;gap:.45rem"><div class="prod-price">R$${p.preco.toFixed(2)}</div><div class="ico-btn" onclick="editProd('${p.id}')">✏️</div><div class="ico-btn" style="color:var(--red)" onclick="delProd('${p.id}')">🗑️</div></div></div>`).join('');
+  list.innerHTML = prods.map(p => `<div class="prod-item"><div style="flex:1"><div class="prod-nome">${p.nome}</div><div style="margin-top:.25rem"><span class="badge badge-fire" style="font-size:.63rem;padding:.18rem .5rem">${p.cat}</span></div></div><div style="display:flex;align-items:center;gap:.45rem"><div class="prod-price">R$${p.preco.toFixed(2)}</div><div class="prod-acts"><div class="ico-btn" onclick="editProd('${p.id}')">✏️</div><div class="ico-btn" style="color:var(--red)" onclick="delProd('${p.id}')">🗑️</div></div></div></div>`).join('');
 }
 function setCat(c) {
   catA = c;
@@ -664,8 +721,7 @@ async function saveProd(id) {
   const preco = parseFloat(document.getElementById('fp-preco').value);
   const cat = document.getElementById('fp-cat').value;
   if (!nome || isNaN(preco) || preco < 0) { toast('Preencha nome e preço!', '⚠️'); return }
-  const prod = { id: id || uid(), nome, preco, cat };
-  await sbSaveProduto(prod);
+  await sbSaveProduto({ id: id || uid(), nome, preco, cat });
   closeOv('ov-prod'); toast('Produto salvo!', '✅');
 }
 
@@ -685,63 +741,29 @@ function renderDash() {
   const now = new Date();
   const dd = document.getElementById('dash-date');
   if (dd) dd.textContent = now.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
-
-  // Fechamentos do Supabase usam snake_case: mesa_id, total, pagamento, itens, data
   const fec = S.fechamentos.filter(f => {
     const d = new Date(f.data);
     if (dTab === 'dia') return d.toDateString() === now.toDateString();
     if (dTab === 'semana') { const diff = (now - d) / 864e5; return diff < 7 && diff >= 0 }
     return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
   });
-
   const total = fec.reduce((s, f) => s + f.total, 0);
-  const qtd = fec.length;
-  const ticket = qtd ? total / qtd : 0;
-  const maxV = fec.length ? Math.max(...fec.map(f => f.total)) : 0;
-
+  const qtd = fec.length; const ticket = qtd ? total / qtd : 0; const maxV = fec.length ? Math.max(...fec.map(f => f.total)) : 0;
   let chartD = [];
-  if (dTab === 'dia') {
-    for (let h = 10; h <= 23; h++) { const t = fec.filter(f => new Date(f.data).getHours() === h).reduce((s, f) => s + f.total, 0); chartD.push({ l: `${h}h`, v: t }) }
-  } else if (dTab === 'semana') {
-    const ds = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-    for (let d = 6; d >= 0; d--) { const dt = new Date(now); dt.setDate(now.getDate() - d); const t = fec.filter(f => new Date(f.data).toDateString() === dt.toDateString()).reduce((s, f) => s + f.total, 0); chartD.push({ l: ds[dt.getDay()], v: t }) }
-  } else {
-    const days = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-    for (let d = 1; d <= days; d++) { const t = fec.filter(f => { const x = new Date(f.data); return x.getDate() === d && x.getMonth() === now.getMonth() }).reduce((s, f) => s + f.total, 0); chartD.push({ l: `${d}`, v: t }) }
-  }
-
+  if (dTab === 'dia') { for (let h = 10; h <= 23; h++) { const t = fec.filter(f => new Date(f.data).getHours() === h).reduce((s, f) => s + f.total, 0); chartD.push({ l: `${h}h`, v: t }) } }
+  else if (dTab === 'semana') { const ds = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']; for (let d = 6; d >= 0; d--) { const dt = new Date(now); dt.setDate(now.getDate() - d); const t = fec.filter(f => new Date(f.data).toDateString() === dt.toDateString()).reduce((s, f) => s + f.total, 0); chartD.push({ l: ds[dt.getDay()], v: t }) } }
+  else { const days = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate(); for (let d = 1; d <= days; d++) { const t = fec.filter(f => { const x = new Date(f.data); return x.getDate() === d && x.getMonth() === now.getMonth() }).reduce((s, f) => s + f.total, 0); chartD.push({ l: `${d}`, v: t }) } }
   const mx = Math.max(...chartD.map(x => x.v), 1);
   const bars = chartD.map(c => `<div class="bar-col"><div class="bar-top">${c.v > 0 ? 'R$' + c.v.toFixed(0) : ''}</div><div class="bar${c.v === 0 ? ' zero' : ''}" style="height:${Math.max(2, (c.v / mx) * 72)}px"></div><div class="bar-x">${c.l}</div></div>`).join('');
-
   const pags = { pix: { icon: '💠', label: 'PIX', bg: 'var(--blue-bg)' }, cartao: { icon: '💳', label: 'Cartão', bg: 'var(--amber-bg)' }, dinheiro: { icon: '💵', label: 'Dinheiro', bg: 'var(--green-bg)' } };
-  const pagRows = Object.entries(pags).map(([k, v]) => {
-    const t = fec.filter(f => f.pagamento === k).reduce((s, f) => s + f.total, 0);
-    const cnt = fec.filter(f => f.pagamento === k).length;
-    return `<div class="pag-row"><div class="pag-left"><div class="pag-ico" style="background:${v.bg}">${v.icon}</div><div><div class="pag-name">${v.label}</div><div class="pag-cnt">${cnt} venda${cnt !== 1 ? 's' : ''}</div></div></div><div class="pag-val">R$${t.toFixed(2)}</div></div>`;
-  }).join('');
-
-  const pq = {};
-  fec.forEach(f => (f.itens || []).forEach(i => { pq[i.pid] = (pq[i.pid] || 0) + i.qty }));
-  const top = Object.entries(pq).sort((a, b) => b[1] - a[1]).slice(0, 5);
-  const maxQ = top.length ? top[0][1] : 1;
-  const topHTML = top.length ? top.map(([id, qty], i) => {
-    const p = S.produtos.find(x => x.id === id);
-    return `<div class="rank-item"><div class="rank-n${i === 0 ? ' gold' : ''}">${i + 1}</div><div style="flex:1"><div class="rank-name">${p ? p.nome : '(removido)'}</div><div class="rbar-wrap"><div class="rbar" style="width:${(qty / maxQ * 100).toFixed(0)}%"></div></div></div><div class="rank-qty">${qty} un</div></div>`;
-  }).join('') : `<div class="empty" style="padding:1.2rem"><div style="font-size:.85rem">Sem dados ainda</div></div>`;
-
-  const recentHTML = [...fec].slice(0, 6).map(f => {
-    const icons = { pix: '💠', cartao: '💳', dinheiro: '💵' };
-    const mesaLabel = f.mesa_id || f.mesaId;
-    return `<div class="recent-item"><div><div class="recent-title">Mesa ${mesaLabel}</div><div class="recent-time">${new Date(f.data).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div></div><div style="display:flex;align-items:center;gap:.55rem"><span style="font-size:1rem">${icons[f.pagamento] || ''}</span><div class="r-val">R$${f.total.toFixed(2)}</div></div></div>`;
-  }).join('');
-
+  const pagRows = Object.entries(pags).map(([k, v]) => { const t = fec.filter(f => f.pagamento === k).reduce((s, f) => s + f.total, 0); const cnt = fec.filter(f => f.pagamento === k).length; return `<div class="pag-row"><div class="pag-left"><div class="pag-ico" style="background:${v.bg}">${v.icon}</div><div><div class="pag-name">${v.label}</div><div class="pag-cnt">${cnt} venda${cnt !== 1 ? 's' : ''}</div></div></div><div class="pag-val">R$${t.toFixed(2)}</div></div>`; }).join('');
+  const pq = {}; fec.forEach(f => (f.itens || []).forEach(i => { pq[i.pid] = (pq[i.pid] || 0) + i.qty }));
+  const top = Object.entries(pq).sort((a, b) => b[1] - a[1]).slice(0, 5); const maxQ = top.length ? top[0][1] : 1;
+  const topHTML = top.length ? top.map(([id, qty], i) => { const p = S.produtos.find(x => x.id === id); return `<div class="rank-item"><div class="rank-n${i === 0 ? ' gold' : ''}">${i + 1}</div><div style="flex:1"><div class="rank-name">${p ? p.nome : '(removido)'}</div><div class="rbar-wrap"><div class="rbar" style="width:${(qty / maxQ * 100).toFixed(0)}%"></div></div></div><div class="rank-qty">${qty} un</div></div>`; }).join('') : `<div class="empty" style="padding:1.2rem"><div style="font-size:.85rem">Sem dados ainda</div></div>`;
+  // mesaId pode ser "mesaId" ou "mesa_id" dependendo da coluna criada
+  const recentHTML = [...fec].slice(0, 6).map(f => { const icons = { pix: '💠', cartao: '💳', dinheiro: '💵' }; const mid = f.mesaId ?? f.mesa_id ?? '?'; return `<div class="recent-item"><div><div class="recent-title">Mesa ${mid}</div><div class="recent-time">${new Date(f.data).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div></div><div style="display:flex;align-items:center;gap:.55rem"><span style="font-size:1rem">${icons[f.pagamento] || ''}</span><div class="r-val">R$${f.total.toFixed(2)}</div></div></div>`; }).join('');
   document.getElementById('dash-body').innerHTML = `
-    <div class="metric-grid">
-      <div class="metric"><div class="m-lbl">Faturamento</div><div class="m-val fire">R$${total.toFixed(2)}</div><div class="m-sub">${{ dia: 'Hoje', semana: 'Esta semana', mes: 'Este mês' }[dTab]}</div></div>
-      <div class="metric"><div class="m-lbl">Mesas</div><div class="m-val">${qtd}</div><div class="m-sub">atendidas</div></div>
-      <div class="metric"><div class="m-lbl">Ticket Médio</div><div class="m-val">R$${ticket.toFixed(2)}</div><div class="m-sub">por mesa</div></div>
-      <div class="metric"><div class="m-lbl">Maior Mesa</div><div class="m-val">${maxV > 0 ? 'R$' + maxV.toFixed(2) : '—'}</div><div class="m-sub">recorde</div></div>
-    </div>
+    <div class="metric-grid"><div class="metric"><div class="m-lbl">Faturamento</div><div class="m-val fire">R$${total.toFixed(2)}</div><div class="m-sub">${{ dia: 'Hoje', semana: 'Esta semana', mes: 'Este mês' }[dTab]}</div></div><div class="metric"><div class="m-lbl">Mesas</div><div class="m-val">${qtd}</div><div class="m-sub">atendidas</div></div><div class="metric"><div class="m-lbl">Ticket Médio</div><div class="m-val">R$${ticket.toFixed(2)}</div><div class="m-sub">por mesa</div></div><div class="metric"><div class="m-lbl">Maior Mesa</div><div class="m-val">${maxV > 0 ? 'R$' + maxV.toFixed(2) : '—'}</div><div class="m-sub">recorde</div></div></div>
     <div class="chart-card"><div class="chart-lbl">Faturamento por ${dTab === 'dia' ? 'Hora' : dTab === 'semana' ? 'Dia' : 'Dia do Mês'}</div><div class="bars">${bars}</div></div>
     <div class="card" style="margin-bottom:.6rem"><div style="padding:.75rem 1rem .2rem"><div class="sec-title">Por Pagamento</div></div>${pagRows}</div>
     <div class="card" style="margin-bottom:.6rem"><div style="padding:.75rem 1rem .2rem"><div class="sec-title">🏆 Top Produtos</div></div><div style="padding:0 .5rem .5rem">${topHTML}</div></div>
