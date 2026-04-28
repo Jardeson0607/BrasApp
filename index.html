@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>BrasApp</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
@@ -21,7 +22,6 @@
 html,body{height:100%;overflow:hidden}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column}
 
-/* LOGIN */
 #login-screen{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem}
 .login-brand{font-family:'Bebas Neue',sans-serif;font-size:3.5rem;letter-spacing:3px;background:linear-gradient(135deg,var(--fire3),var(--fire2),var(--fire));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;margin-bottom:.2rem}
 .login-sub{font-size:.7rem;color:var(--text3);letter-spacing:3px;text-transform:uppercase;text-align:center;margin-bottom:2.5rem}
@@ -202,25 +202,13 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .cfg-row:last-child{border-bottom:none}
 .cfg-label{font-size:.9rem;font-weight:600;color:var(--text)}
 .cfg-sub{font-size:.72rem;color:var(--text3);margin-top:.15rem}
-@media(min-width:600px){
-  .mesas-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
-  .metric-grid{grid-template-columns:repeat(4,1fr)}
-}
+@media(min-width:600px){.mesas-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}.metric-grid{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:340px){.form-2col{grid-template-columns:1fr}}
 </style>
-  <link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-capable" content="yes">
-
-<script>
-  // Registra o Service Worker
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
-  }
-</script>
 </head>
 <body>
 
+<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-brand">🔥 BrasApp</div>
   <div class="login-sub">Gestão de Espetinho</div>
@@ -228,12 +216,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <div class="login-title">Quem está acessando?</div>
     <div class="login-roles">
       <div class="role-btn on" id="rb-dono" onclick="selRole('dono')">
-        <div class="role-icon">👑</div>
-        <div class="role-lbl">Dono</div>
+        <div class="role-icon">👑</div><div class="role-lbl">Dono</div>
       </div>
       <div class="role-btn" id="rb-func" onclick="selRole('funcionario')">
-        <div class="role-icon">👷</div>
-        <div class="role-lbl">Funcionário</div>
+        <div class="role-icon">👷</div><div class="role-lbl">Funcionário</div>
       </div>
     </div>
     <div class="lfield">
@@ -242,10 +228,11 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     </div>
     <div class="login-err" id="login-err"></div>
     <button class="btn-login" onclick="doLogin()">Entrar</button>
-    <div class="login-hint" id="login-hint-txt">Dono: acesso total · Funcionário: só mesas</div>
+    <div class="login-hint">Dono: acesso total · Funcionário: só mesas</div>
   </div>
 </div>
 
+<!-- HEADER -->
 <div class="app-header">
   <div class="header-inner">
     <div>
@@ -265,6 +252,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   </div>
 </div>
 
+<!-- PAGES -->
 <div class="app-main">
   <div id="pg-mesas" class="page active">
     <div class="pg-header" style="padding-top:.2rem">
@@ -282,6 +270,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   <div id="pg-config" class="page"><div id="config-page-content"></div></div>
 </div>
 
+<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <button class="nav-item active" id="nav-mesas" onclick="goPage('mesas',this)">
     <div class="nav-bar"></div><div class="nav-icon">🪑</div><div class="nav-label">Mesas</div>
@@ -297,148 +286,312 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   </button>
 </nav>
 
+<!-- OVERLAYS -->
 <div class="overlay" id="ov-mesa" onclick="closeSelf(this)">
-  <div class="sheet">
-    <div class="sh-handle"></div>
-    <div class="sh-header">
-      <div class="sh-title" id="sh-mesa-title">Mesa 1</div>
-      <div class="sh-close" onclick="closeOv('ov-mesa')">✕</div>
-    </div>
+  <div class="sheet"><div class="sh-handle"></div>
+    <div class="sh-header"><div class="sh-title" id="sh-mesa-title">Mesa 1</div><div class="sh-close" onclick="closeOv('ov-mesa')">✕</div></div>
     <div class="sh-body" id="sh-mesa-body"></div>
   </div>
 </div>
-
 <div class="overlay" id="ov-prod" onclick="closeSelf(this)">
-  <div class="sheet">
-    <div class="sh-handle"></div>
-    <div class="sh-header">
-      <div class="sh-title" id="sh-prod-title">Novo Produto</div>
-      <div class="sh-close" onclick="closeOv('ov-prod')">✕</div>
-    </div>
+  <div class="sheet"><div class="sh-handle"></div>
+    <div class="sh-header"><div class="sh-title" id="sh-prod-title">Novo Produto</div><div class="sh-close" onclick="closeOv('ov-prod')">✕</div></div>
     <div class="sh-body" id="sh-prod-body"></div>
   </div>
 </div>
-
 <div class="overlay" id="ov-fechar" onclick="closeSelf(this)">
-  <div class="sheet">
-    <div class="sh-handle"></div>
-    <div class="sh-header">
-      <div class="sh-title" id="sh-fechar-title">Fechar Conta</div>
-      <div class="sh-close" onclick="closeOv('ov-fechar')">✕</div>
-    </div>
+  <div class="sheet"><div class="sh-handle"></div>
+    <div class="sh-header"><div class="sh-title" id="sh-fechar-title">Fechar Conta</div><div class="sh-close" onclick="closeOv('ov-fechar')">✕</div></div>
     <div class="sh-body" id="sh-fechar-body"></div>
   </div>
 </div>
-
 <div class="overlay" id="ov-senha" onclick="closeSelf(this)">
-  <div class="sheet">
-    <div class="sh-handle"></div>
-    <div class="sh-header">
-      <div class="sh-title" id="sh-senha-title">Alterar Senha</div>
-      <div class="sh-close" onclick="closeOv('ov-senha')">✕</div>
-    </div>
+  <div class="sheet"><div class="sh-handle"></div>
+    <div class="sh-header"><div class="sh-title" id="sh-senha-title">Alterar Senha</div><div class="sh-close" onclick="closeOv('ov-senha')">✕</div></div>
     <div class="sh-body" id="sh-senha-body"></div>
   </div>
 </div>
 
 <script>
-let currentRole=null;
-let S={produtos:[],mesas:{},fechamentos:[],senhas:{dono:'1234',funcionario:'0000'}};
-function save(){try{localStorage.setItem('brasapp4',JSON.stringify(S))}catch(e){}}
-function load(){try{const d=localStorage.getItem('brasapp4');if(d){const p=JSON.parse(d);S=Object.assign(S,p);if(!S.senhas)S.senhas={dono:'1234',funcionario:'0000'}}}catch(e){}}
-load();
-if(!S.produtos)S.produtos=[];if(!S.mesas)S.mesas={};if(!S.fechamentos)S.fechamentos=[];
-if(S.produtos.length===0){
-  [['Espeto de Frango',7.50,'Espetos'],['Espeto de Carne',10.00,'Espetos'],['Espeto Misto',8.50,'Espetos'],
-   ['Espeto de Linguiça',8.00,'Espetos'],['Espeto de Coração',7.00,'Espetos'],
-   ['Cerveja Lata 350ml',5.00,'Bebidas'],['Cerveja Long Neck',7.50,'Bebidas'],
-   ['Refrigerante Lata',5.00,'Bebidas'],['Água Mineral',3.00,'Bebidas'],
-   ['Porção de Fritas',15.00,'Porções'],['Pão de Alho (6un)',9.00,'Porções'],['Mandioca Frita',14.00,'Porções'],
-   ['Creme de Papaya',10.00,'Sobremesas'],['Pudim',8.00,'Sobremesas']
-  ].forEach(([nome,preco,cat])=>S.produtos.push({id:uid(),nome,preco,cat}));
-  save();
-}
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+// ================================================================
+// SUPABASE CONFIG
+// ================================================================
+const SUPABASE_URL = 'https://kieejgcxljtiybkjedfw.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_VtPJ0leGH9WmkVFA5a3Fkg_juJ1zts1';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let selRoleVal='dono';
-function selRole(r){selRoleVal=r;document.getElementById('rb-dono').classList.toggle('on',r==='dono');document.getElementById('rb-func').classList.toggle('on',r==='funcionario')}
-function doLogin(){
-  const pass=document.getElementById('login-pass').value;
-  const err=document.getElementById('login-err');
-  if(pass===S.senhas[selRoleVal]){
-    currentRole=selRoleVal;
-    document.getElementById('login-screen').style.display='none';
-    document.getElementById('user-pill').style.display='flex';
-    document.getElementById('user-dot').className='user-dot '+(currentRole==='dono'?'dot-owner':'dot-staff');
-    document.getElementById('user-label').textContent=currentRole==='dono'?'👑 Dono':'👷 Funcionário';
-    const own=currentRole==='dono';
-    document.getElementById('mesa-pill-wrap').style.display=own?'flex':'none';
-    ['nav-produtos','nav-dash','nav-config'].forEach(id=>{
-      document.getElementById(id).className='nav-item'+(own?'':' locked');
-    });
-    goPage('mesas',document.getElementById('nav-mesas'));
-    document.getElementById('login-pass').value='';err.textContent='';
-  }else{err.textContent='Senha incorreta.';document.getElementById('login-pass').value='';document.getElementById('login-pass').focus()}
-}
-function logout(){if(!confirm('Sair do BrasApp?'))return;currentRole=null;document.getElementById('login-screen').style.display='flex';document.getElementById('user-pill').style.display='none';document.getElementById('mesa-pill-wrap').style.display='none'}
-function isOwner(){return currentRole==='dono'}
-function goPage(p,el){
-  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
-  document.getElementById('pg-'+p).classList.add('active');
-  el.classList.add('active');
-  if(p==='mesas')renderMesas();
-  if(p==='produtos')renderProdutosPage();
-  if(p==='dash')renderDashPage();
-  if(p==='config')renderConfigPage();
-}
-function tryNav(p,el){if(!isOwner()){toast('Acesso restrito ao dono 👑','🔒');return}goPage(p,el)}
-function openOv(id){document.getElementById(id).classList.add('open')}
-function closeOv(id){document.getElementById(id).classList.remove('open')}
-function closeSelf(el){if(el===event.target)el.classList.remove('open')}
-function toast(msg,icon='🔥'){const t=document.createElement('div');t.className='toast';t.innerHTML=`<span>${icon}</span>${msg}`;document.body.appendChild(t);setTimeout(()=>t.remove(),2800)}
+// ================================================================
+// STATE
+// ================================================================
+let currentRole = null;
+let S = { produtos: [], mesas: {}, fechamentos: [], senhas: { dono: '1234', funcionario: '0000' } };
 
-function getMesa(id){if(!S.mesas[id])S.mesas[id]={status:'livre',pedidos:[]};return S.mesas[id]}
-function calcTotal(pedidos){return pedidos.reduce((s,p)=>{const pr=S.produtos.find(x=>x.id===p.pid);return s+(pr?pr.preco*p.qty:0)},0)}
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8) }
 
-function renderMesas(){
-  const n=parseInt(document.getElementById('numMesas')?.value||12);
-  const g=document.getElementById('mesas-grid');g.innerHTML='';let ativas=0;
-  for(let i=1;i<=n;i++){
-    const m=getMesa(i);const tot=calcTotal(m.pedidos||[]);const ocp=m.status==='ocupada'&&m.pedidos.length>0;
-    if(ocp)ativas++;
-    const d=document.createElement('div');d.className='mesa-tile '+(ocp?'ocupada':'livre');
-    d.innerHTML=(ocp?'<div class="mesa-dot"></div>':'')+`<div class="mesa-n">${i}</div><div class="mesa-s">${ocp?'Ocupada':'Livre'}</div>`+(ocp?`<div class="mesa-v">R$${tot.toFixed(2)}</div>`:'');
-    d.onclick=()=>openMesa(i);g.appendChild(d);
+// ================================================================
+// LOADING
+// ================================================================
+function showLoading(msg = 'Carregando...') {
+  let el = document.getElementById('fb-loading');
+  if (!el) {
+    el = document.createElement('div'); el.id = 'fb-loading';
+    el.style.cssText = 'position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem';
+    el.innerHTML = `<div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:2px;background:linear-gradient(135deg,#FFC13D,#FF8C42,#FF5722);-webkit-background-clip:text;-webkit-text-fill-color:transparent">🔥 BrasApp</div>
+    <div id="fb-load-msg" style="font-size:.8rem;color:#7A5C40;letter-spacing:1px;text-transform:uppercase">${msg}</div>
+    <div style="width:40px;height:40px;border:3px solid #3D2210;border-top-color:#FF8C42;border-radius:50%;animation:spin .7s linear infinite"></div>
+    <style>@keyframes spin{to{transform:rotate(360deg)}}</style>`;
+    document.body.appendChild(el);
+  } else { document.getElementById('fb-load-msg').textContent = msg }
+}
+function hideLoading() { const el = document.getElementById('fb-loading'); if (el) el.remove() }
+
+// ================================================================
+// INIT SUPABASE
+// ================================================================
+async function initSupabase() {
+  showLoading('Conectando ao banco de dados...');
+  try {
+    // Carregar senhas
+    const { data: cfgData } = await sb.from('config').select('dados').eq('id', 'senhas').single();
+    if (cfgData) { S.senhas = cfgData.dados }
+    else { await sb.from('config').insert({ id: 'senhas', dados: S.senhas }) }
+
+    // Carregar produtos
+    const { data: prods } = await sb.from('produtos').select('*');
+    S.produtos = prods || [];
+    if (S.produtos.length === 0) await seedProdutos();
+
+    // Carregar mesas
+    const { data: mesas } = await sb.from('mesas').select('*');
+    S.mesas = {};
+    (mesas || []).forEach(m => { S.mesas[m.id] = { status: m.status, pedidos: m.pedidos || [] } });
+
+    // Carregar fechamentos
+    const { data: fec } = await sb.from('fechamentos').select('*').order('data', { ascending: false });
+    S.fechamentos = fec || [];
+
+    // Realtime: produtos
+    sb.channel('produtos').on('postgres_changes', { event: '*', schema: 'public', table: 'produtos' }, async () => {
+      const { data } = await sb.from('produtos').select('*');
+      S.produtos = data || [];
+      renderProdutos(); renderMesaSheetIfOpen();
+    }).subscribe();
+
+    // Realtime: mesas
+    sb.channel('mesas').on('postgres_changes', { event: '*', schema: 'public', table: 'mesas' }, async () => {
+      const { data } = await sb.from('mesas').select('*');
+      S.mesas = {};
+      (data || []).forEach(m => { S.mesas[m.id] = { status: m.status, pedidos: m.pedidos || [] } });
+      renderMesas(); renderMesaSheetIfOpen();
+    }).subscribe();
+
+    // Realtime: fechamentos
+    sb.channel('fechamentos').on('postgres_changes', { event: '*', schema: 'public', table: 'fechamentos' }, async () => {
+      const { data } = await sb.from('fechamentos').select('*').order('data', { ascending: false });
+      S.fechamentos = data || [];
+      if (document.getElementById('dash-body')) renderDash();
+    }).subscribe();
+
+    hideLoading();
+    renderMesas();
+  } catch (e) {
+    hideLoading();
+    toast('Erro ao conectar ao banco: ' + e.message, '❌');
+    console.error(e);
   }
-  document.getElementById('live-badge').textContent=ativas+' ativa'+(ativas!==1?'s':'');
 }
 
-let aMesa=null;
-function openMesa(id){aMesa=id;document.getElementById('sh-mesa-title').textContent='Mesa '+id;renderMesaSheet(id);openOv('ov-mesa')}
-function renderMesaSheet(id){
-  const m=getMesa(id);const tot=calcTotal(m.pedidos||[]);const hasPed=m.pedidos.length>0;
-  let pedHTML=hasPed?m.pedidos.map(p=>{const pr=S.produtos.find(x=>x.id===p.pid);if(!pr)return'';
-    return`<div class="order-item"><div style="flex:1"><div class="order-name">${pr.nome}</div><div class="order-sub">${pr.cat} · R$${pr.preco.toFixed(2)}/un</div></div><div class="qty-ctrl"><div class="qty-btn" onclick="chgQty(${id},'${p.pid}',-1)">−</div><div class="qty-n">${p.qty}</div><div class="qty-btn" onclick="chgQty(${id},'${p.pid}',1)">+</div></div><div class="o-price">R$${(pr.preco*p.qty).toFixed(2)}</div></div>`;
-  }).join('')+`<div class="total-row"><div><div class="total-lbl">Total</div></div><div class="total-val">R$ ${tot.toFixed(2)}</div></div>`:`<div class="empty"><span class="empty-icon">🍽️</span><div style="font-size:.88rem">Nenhum pedido ainda</div></div>`;
-  const prodHTML=S.produtos.map(p=>`<div class="add-item"><div><div class="add-name">${p.nome}</div><div class="add-info">${p.cat}</div></div><div style="display:flex;align-items:center"><div class="add-price">R$${p.preco.toFixed(2)}</div><button class="btn btn-fire btn-xs" onclick="addItem(${id},'${p.id}')">+ Add</button></div></div>`).join('');
-  document.getElementById('sh-mesa-body').innerHTML=`
-    ${hasPed?'<div class="sec-title">Pedidos na Mesa</div>':''}<div id="peds-${id}">${pedHTML}</div>
-    ${hasPed?`<button class="btn btn-green btn-block" style="margin:1rem 0" onclick="abrirFechar(${id})">💳 Fechar Conta · R$ ${tot.toFixed(2)}</button><div class="divider"></div>`:''}
-    <div class="sec-title" style="margin-top:${hasPed?'0':'.75rem'}">Adicionar ao Pedido</div>
+// ================================================================
+// SEED DE PRODUTOS
+// ================================================================
+async function seedProdutos() {
+  const seeds = [
+    ['Espeto de Frango', 7.50, 'Espetos'], ['Espeto de Carne', 10.00, 'Espetos'],
+    ['Espeto Misto', 8.50, 'Espetos'], ['Espeto de Linguiça', 8.00, 'Espetos'],
+    ['Espeto de Coração', 7.00, 'Espetos'], ['Cerveja Lata 350ml', 5.00, 'Bebidas'],
+    ['Cerveja Long Neck', 7.50, 'Bebidas'], ['Refrigerante Lata', 5.00, 'Bebidas'],
+    ['Água Mineral', 3.00, 'Bebidas'], ['Porção de Fritas', 15.00, 'Porções'],
+    ['Pão de Alho (6un)', 9.00, 'Porções'], ['Mandioca Frita', 14.00, 'Porções'],
+    ['Creme de Papaya', 10.00, 'Sobremesas'], ['Pudim', 8.00, 'Sobremesas']
+  ];
+  const rows = seeds.map(([nome, preco, cat]) => ({ id: uid(), nome, preco, cat }));
+  const { data } = await sb.from('produtos').insert(rows).select();
+  S.produtos = data || [];
+}
+
+// ================================================================
+// SUPABASE: ESCRITA
+// ================================================================
+async function sbSaveProduto(p) {
+  await sb.from('produtos').upsert({ id: p.id, nome: p.nome, preco: p.preco, cat: p.cat });
+}
+async function sbDeleteProduto(id) {
+  await sb.from('produtos').delete().eq('id', id);
+}
+async function sbSaveMesa(id, dados) {
+  await sb.from('mesas').upsert({ id: String(id), status: dados.status, pedidos: dados.pedidos });
+}
+async function sbAddFechamento(f) {
+  await sb.from('fechamentos').insert({
+    mesa_id: f.mesaId, total: f.total, pagamento: f.pagamento,
+    itens: f.itens, data: f.data
+  });
+}
+async function sbSaveSenhas() {
+  await sb.from('config').upsert({ id: 'senhas', dados: S.senhas });
+}
+async function sbLimparFechamentos() {
+  await sb.from('fechamentos').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+}
+
+// ================================================================
+// HELPERS
+// ================================================================
+function renderMesaSheetIfOpen() {
+  if (aMesa && document.getElementById('ov-mesa')?.classList.contains('open')) {
+    renderMesaSheet(aMesa);
+  }
+}
+
+// ================================================================
+// LOGIN
+// ================================================================
+let selRoleVal = 'dono';
+function selRole(r) {
+  selRoleVal = r;
+  document.getElementById('rb-dono').classList.toggle('on', r === 'dono');
+  document.getElementById('rb-func').classList.toggle('on', r === 'funcionario');
+}
+function doLogin() {
+  const pass = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-err');
+  if (pass === S.senhas[selRoleVal]) {
+    currentRole = selRoleVal;
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('user-pill').style.display = 'flex';
+    document.getElementById('user-dot').className = 'user-dot ' + (currentRole === 'dono' ? 'dot-owner' : 'dot-staff');
+    document.getElementById('user-label').textContent = currentRole === 'dono' ? '👑 Dono' : '👷 Funcionário';
+    const own = currentRole === 'dono';
+    document.getElementById('mesa-pill-wrap').style.display = own ? 'flex' : 'none';
+    ['nav-produtos', 'nav-dash', 'nav-config'].forEach(id => {
+      document.getElementById(id).className = 'nav-item' + (own ? '' : ' locked');
+    });
+    goPage('mesas', document.getElementById('nav-mesas'));
+    document.getElementById('login-pass').value = ''; err.textContent = '';
+  } else {
+    err.textContent = 'Senha incorreta.';
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-pass').focus();
+  }
+}
+function logout() {
+  if (!confirm('Sair do BrasApp?')) return;
+  currentRole = null;
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('user-pill').style.display = 'none';
+  document.getElementById('mesa-pill-wrap').style.display = 'none';
+}
+function isOwner() { return currentRole === 'dono' }
+
+// ================================================================
+// NAVEGAÇÃO
+// ================================================================
+function goPage(p, el) {
+  document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+  document.getElementById('pg-' + p).classList.add('active');
+  el.classList.add('active');
+  if (p === 'mesas') renderMesas();
+  if (p === 'produtos') renderProdutosPage();
+  if (p === 'dash') renderDashPage();
+  if (p === 'config') renderConfigPage();
+}
+function tryNav(p, el) {
+  if (!isOwner()) { toast('Acesso restrito ao dono 👑', '🔒'); return }
+  goPage(p, el);
+}
+function openOv(id) { document.getElementById(id).classList.add('open') }
+function closeOv(id) { document.getElementById(id).classList.remove('open') }
+function closeSelf(el) { if (el === event.target) el.classList.remove('open') }
+function toast(msg, icon = '🔥') {
+  const t = document.createElement('div'); t.className = 'toast';
+  t.innerHTML = `<span>${icon}</span>${msg}`; document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2800);
+}
+
+// ================================================================
+// MESAS
+// ================================================================
+function getMesa(id) {
+  if (!S.mesas[String(id)]) S.mesas[String(id)] = { status: 'livre', pedidos: [] };
+  return S.mesas[String(id)];
+}
+function calcTotal(pedidos) {
+  return pedidos.reduce((s, p) => {
+    const pr = S.produtos.find(x => x.id === p.pid);
+    return s + (pr ? pr.preco * p.qty : 0);
+  }, 0);
+}
+function renderMesas() {
+  const n = parseInt(document.getElementById('numMesas')?.value || 12);
+  const g = document.getElementById('mesas-grid'); g.innerHTML = ''; let ativas = 0;
+  for (let i = 1; i <= n; i++) {
+    const m = getMesa(i); const tot = calcTotal(m.pedidos || []); const ocp = m.status === 'ocupada' && m.pedidos.length > 0;
+    if (ocp) ativas++;
+    const d = document.createElement('div'); d.className = 'mesa-tile ' + (ocp ? 'ocupada' : 'livre');
+    d.innerHTML = (ocp ? '<div class="mesa-dot"></div>' : '') + `<div class="mesa-n">${i}</div><div class="mesa-s">${ocp ? 'Ocupada' : 'Livre'}</div>` + (ocp ? `<div class="mesa-v">R$${tot.toFixed(2)}</div>` : '');
+    d.onclick = () => openMesa(i); g.appendChild(d);
+  }
+  document.getElementById('live-badge').textContent = ativas + ' ativa' + (ativas !== 1 ? 's' : '');
+}
+
+let aMesa = null;
+function openMesa(id) { aMesa = id; document.getElementById('sh-mesa-title').textContent = 'Mesa ' + id; renderMesaSheet(id); openOv('ov-mesa') }
+function renderMesaSheet(id) {
+  const m = getMesa(id); const tot = calcTotal(m.pedidos || []); const hasPed = m.pedidos.length > 0;
+  let pedHTML = hasPed ? m.pedidos.map(p => {
+    const pr = S.produtos.find(x => x.id === p.pid); if (!pr) return '';
+    return `<div class="order-item"><div style="flex:1"><div class="order-name">${pr.nome}</div><div class="order-sub">${pr.cat} · R$${pr.preco.toFixed(2)}/un</div></div><div class="qty-ctrl"><div class="qty-btn" onclick="chgQty(${id},'${p.pid}',-1)">−</div><div class="qty-n">${p.qty}</div><div class="qty-btn" onclick="chgQty(${id},'${p.pid}',1)">+</div></div><div class="o-price">R$${(pr.preco * p.qty).toFixed(2)}</div></div>`;
+  }).join('') + `<div class="total-row"><div><div class="total-lbl">Total</div></div><div class="total-val">R$ ${tot.toFixed(2)}</div></div>`
+    : `<div class="empty"><span class="empty-icon">🍽️</span><div style="font-size:.88rem">Nenhum pedido ainda</div></div>`;
+  const prodHTML = S.produtos.map(p => `<div class="add-item"><div><div class="add-name">${p.nome}</div><div class="add-info">${p.cat}</div></div><div style="display:flex;align-items:center"><div class="add-price">R$${p.preco.toFixed(2)}</div><button class="btn btn-fire btn-xs" onclick="addItem(${id},'${p.id}')">+ Add</button></div></div>`).join('');
+  document.getElementById('sh-mesa-body').innerHTML = `
+    ${hasPed ? '<div class="sec-title">Pedidos na Mesa</div>' : ''}<div id="peds-${id}">${pedHTML}</div>
+    ${hasPed ? `<button class="btn btn-green btn-block" style="margin:1rem 0" onclick="abrirFechar(${id})">💳 Fechar Conta · R$ ${tot.toFixed(2)}</button><div class="divider"></div>` : ''}
+    <div class="sec-title" style="margin-top:${hasPed ? '0' : '.75rem'}">Adicionar ao Pedido</div>
     <div class="search-wrap" style="margin-bottom:.6rem"><span class="search-icon">🔍</span><input type="text" placeholder="Buscar item..." oninput="filterAdd(this,${id})"></div>
     <div class="card"><div id="al-${id}">${prodHTML}</div></div>`;
 }
-function filterAdd(inp,id){const q=inp.value.toLowerCase();document.querySelectorAll(`#al-${id} .add-item`).forEach(el=>{el.style.display=el.textContent.toLowerCase().includes(q)?'':'none'})}
-function addItem(mId,pId){const m=getMesa(mId);m.status='ocupada';const ex=m.pedidos.find(p=>p.pid===pId);if(ex)ex.qty++;else m.pedidos.push({pid:pId,qty:1});save();renderMesaSheet(mId);renderMesas()}
-function chgQty(mId,pId,d){const m=getMesa(mId);const p=m.pedidos.find(x=>x.pid===pId);if(!p)return;p.qty+=d;if(p.qty<=0)m.pedidos=m.pedidos.filter(x=>x.pid!==pId);if(m.pedidos.length===0)m.status='livre';save();renderMesaSheet(mId);renderMesas()}
+function filterAdd(inp, id) {
+  const q = inp.value.toLowerCase();
+  document.querySelectorAll(`#al-${id} .add-item`).forEach(el => { el.style.display = el.textContent.toLowerCase().includes(q) ? '' : 'none' });
+}
+async function addItem(mId, pId) {
+  const m = getMesa(mId); m.status = 'ocupada';
+  const ex = m.pedidos.find(p => p.pid === pId);
+  if (ex) ex.qty++; else m.pedidos.push({ pid: pId, qty: 1 });
+  await sbSaveMesa(mId, m); renderMesaSheet(mId); renderMesas();
+}
+async function chgQty(mId, pId, d) {
+  const m = getMesa(mId); const p = m.pedidos.find(x => x.pid === pId); if (!p) return;
+  p.qty += d;
+  if (p.qty <= 0) m.pedidos = m.pedidos.filter(x => x.pid !== pId);
+  if (m.pedidos.length === 0) m.status = 'livre';
+  await sbSaveMesa(mId, m); renderMesaSheet(mId); renderMesas();
+}
 
-let fId=null,pSel=null;
-function abrirFechar(id){
-  fId=id;pSel=null;const m=getMesa(id);const tot=calcTotal(m.pedidos);
-  document.getElementById('sh-fechar-title').textContent='Fechar Mesa '+id;
-  const itens=m.pedidos.map(p=>{const pr=S.produtos.find(x=>x.id===p.pid);return pr?`<div style="display:flex;justify-content:space-between;padding:.4rem 0;font-size:.86rem;border-bottom:1px solid var(--border)"><span style="color:var(--text2)">${pr.nome} <span style="color:var(--text3)">×${p.qty}</span></span><span style="font-weight:700;color:var(--text)">R$${(pr.preco*p.qty).toFixed(2)}</span></div>`:''}).join('');
-  document.getElementById('sh-fechar-body').innerHTML=`
+// ================================================================
+// FECHAR CONTA
+// ================================================================
+let fId = null, pSel = null;
+function abrirFechar(id) {
+  fId = id; pSel = null; const m = getMesa(id); const tot = calcTotal(m.pedidos);
+  document.getElementById('sh-fechar-title').textContent = 'Fechar Mesa ' + id;
+  const itens = m.pedidos.map(p => {
+    const pr = S.produtos.find(x => x.id === p.pid);
+    return pr ? `<div style="display:flex;justify-content:space-between;padding:.4rem 0;font-size:.86rem;border-bottom:1px solid var(--border)"><span style="color:var(--text2)">${pr.nome} <span style="color:var(--text3)">×${p.qty}</span></span><span style="font-weight:700;color:var(--text)">R$${(pr.preco * p.qty).toFixed(2)}</span></div>` : '';
+  }).join('');
+  document.getElementById('sh-fechar-body').innerHTML = `
     <div class="card card-pad" style="margin-bottom:1rem">${itens}<div style="display:flex;justify-content:space-between;padding-top:.7rem;font-family:'Bebas Neue',sans-serif;font-size:1.45rem;letter-spacing:.5px"><span style="color:var(--text3)">TOTAL</span><span style="background:linear-gradient(135deg,var(--fire3),var(--fire2));-webkit-background-clip:text;-webkit-text-fill-color:transparent">R$ ${tot.toFixed(2)}</span></div></div>
     <div class="sec-title">Forma de Pagamento</div>
     <div class="pay-grid">
@@ -447,92 +600,161 @@ function abrirFechar(id){
       <div class="pay-btn" id="pb-dinheiro" onclick="selPag('dinheiro')"><div class="pay-icon">💵</div><div class="pay-lbl">Dinheiro</div></div>
     </div>
     <button class="btn btn-green btn-block" style="margin-top:.5rem;padding:1rem" onclick="confirmar()">✓ Confirmar Fechamento</button>`;
-  closeOv('ov-mesa');openOv('ov-fechar');
+  closeOv('ov-mesa'); openOv('ov-fechar');
 }
-function selPag(p){pSel=p;['pix','cartao','dinheiro'].forEach(x=>document.getElementById('pb-'+x).classList.toggle('on',x===p))}
-function confirmar(){
-  if(!pSel){toast('Selecione o pagamento!','⚠️');return}
-  const m=getMesa(fId);const tot=calcTotal(m.pedidos);
-  S.fechamentos.push({mesaId:fId,total:tot,pagamento:pSel,itens:[...m.pedidos],data:new Date().toISOString()});
-  S.mesas[fId]={status:'livre',pedidos:[]};save();closeOv('ov-fechar');renderMesas();
-  toast(`Mesa ${fId} fechada! R$${tot.toFixed(2)}`,{pix:'💠',cartao:'💳',dinheiro:'💵'}[pSel]);
+function selPag(p) {
+  pSel = p;
+  ['pix', 'cartao', 'dinheiro'].forEach(x => document.getElementById('pb-' + x).classList.toggle('on', x === p));
+}
+async function confirmar() {
+  if (!pSel) { toast('Selecione o pagamento!', '⚠️'); return }
+  const m = getMesa(fId); const tot = calcTotal(m.pedidos);
+  const fechamento = { mesaId: fId, total: tot, pagamento: pSel, itens: [...m.pedidos], data: new Date().toISOString() };
+  await sbAddFechamento(fechamento);
+  await sbSaveMesa(fId, { status: 'livre', pedidos: [] });
+  closeOv('ov-fechar'); renderMesas();
+  toast(`Mesa ${fId} fechada! R$${tot.toFixed(2)}`, { pix: '💠', cartao: '💳', dinheiro: '💵' }[pSel]);
 }
 
-let catA='';
-function renderProdutosPage(){
-  const el=document.getElementById('prod-page-content');
-  if(!isOwner()){el.innerHTML=`<div class="access-denied"><div class="ad-icon">🔒</div><div class="ad-title">Acesso Restrito</div><div class="ad-sub">Somente o dono pode acessar o cardápio.</div></div>`;return}
-  el.innerHTML=`<div class="pg-header"><div><div class="pg-title">Cardápio</div><div class="pg-sub" id="prod-count-sub">${S.produtos.length} produtos</div></div><button class="btn btn-fire btn-sm" onclick="openProdModal()">+ Novo</button></div><div class="search-wrap"><span class="search-icon">🔍</span><input type="text" id="prod-search" placeholder="Buscar produto..." oninput="renderProdutos()"></div><div class="cat-row" id="cat-row"></div><div class="card"><div id="prod-list"></div></div>`;
+// ================================================================
+// PRODUTOS
+// ================================================================
+let catA = '';
+function renderProdutosPage() {
+  const el = document.getElementById('prod-page-content');
+  if (!isOwner()) { el.innerHTML = `<div class="access-denied"><div class="ad-icon">🔒</div><div class="ad-title">Acesso Restrito</div><div class="ad-sub">Somente o dono pode acessar o cardápio.</div></div>`; return }
+  el.innerHTML = `<div class="pg-header"><div><div class="pg-title">Cardápio</div><div class="pg-sub" id="prod-count-sub">${S.produtos.length} produtos</div></div><button class="btn btn-fire btn-sm" onclick="openProdModal()">+ Novo</button></div><div class="search-wrap"><span class="search-icon">🔍</span><input type="text" id="prod-search" placeholder="Buscar produto..." oninput="renderProdutos()"></div><div class="cat-row" id="cat-row"></div><div class="card"><div id="prod-list"></div></div>`;
   renderProdutos();
 }
-function renderProdutos(){
-  if(!document.getElementById('prod-list'))return;
-  const q=(document.getElementById('prod-search')?.value||'').toLowerCase();
-  const cats=[...new Set(S.produtos.map(p=>p.cat))];
-  const cr=document.getElementById('cat-row');
-  if(cr)cr.innerHTML=`<div class="chip${catA===''?' on':''}" onclick="setCat('')">Todos</div>`+cats.map(c=>`<div class="chip${catA===c?' on':''}" onclick="setCat('${c}')">${c}</div>`).join('');
-  if(document.getElementById('prod-count-sub'))document.getElementById('prod-count-sub').textContent=`${S.produtos.length} produtos`;
-  let prods=S.produtos.filter(p=>(!q||p.nome.toLowerCase().includes(q))&&(!catA||p.cat===catA));
-  const list=document.getElementById('prod-list');
-  if(!prods.length){list.innerHTML=`<div class="empty"><span class="empty-icon">📦</span><div style="font-size:.88rem">Nenhum produto encontrado</div></div>`;return}
-  list.innerHTML=prods.map(p=>`<div class="prod-item"><div style="flex:1"><div class="prod-nome">${p.nome}</div><div style="margin-top:.25rem"><span class="badge badge-fire" style="font-size:.63rem;padding:.18rem .5rem">${p.cat}</span></div></div><div style="display:flex;align-items:center;gap:.45rem"><div class="prod-price">R$${p.preco.toFixed(2)}</div><div class="prod-acts"><div class="ico-btn" onclick="editProd('${p.id}')">✏️</div><div class="ico-btn" style="color:var(--red)" onclick="delProd('${p.id}')">🗑️</div></div></div></div>`).join('');
+function renderProdutos() {
+  if (!document.getElementById('prod-list')) return;
+  const q = (document.getElementById('prod-search')?.value || '').toLowerCase();
+  const cats = [...new Set(S.produtos.map(p => p.cat))];
+  const cr = document.getElementById('cat-row');
+  if (cr) cr.innerHTML = `<div class="chip${catA === '' ? ' on' : ''}" onclick="setCat('')">Todos</div>` + cats.map(c => `<div class="chip${catA === c ? ' on' : ''}" onclick="setCat('${c}')">${c}</div>`).join('');
+  if (document.getElementById('prod-count-sub')) document.getElementById('prod-count-sub').textContent = `${S.produtos.length} produtos`;
+  let prods = S.produtos.filter(p => (!q || p.nome.toLowerCase().includes(q)) && (!catA || p.cat === catA));
+  const list = document.getElementById('prod-list');
+  if (!prods.length) { list.innerHTML = `<div class="empty"><span class="empty-icon">📦</span><div style="font-size:.88rem">Nenhum produto encontrado</div></div>`; return }
+  list.innerHTML = prods.map(p => `<div class="prod-item"><div style="flex:1"><div class="prod-nome">${p.nome}</div><div style="margin-top:.25rem"><span class="badge badge-fire" style="font-size:.63rem;padding:.18rem .5rem">${p.cat}</span></div></div><div style="display:flex;align-items:center;gap:.45rem"><div class="prod-price">R$${p.preco.toFixed(2)}</div><div class="ico-btn" onclick="editProd('${p.id}')">✏️</div><div class="ico-btn" style="color:var(--red)" onclick="delProd('${p.id}')">🗑️</div></div></div>`).join('');
 }
-function setCat(c){catA=c;document.querySelectorAll('.chip').forEach(el=>el.classList.toggle('on',el.textContent===(c||'Todos')));renderProdutos()}
-function openProdModal(id){
-  if(!isOwner()){toast('Acesso restrito!','🔒');return}
-  const p=id?S.produtos.find(x=>x.id===id):null;
-  document.getElementById('sh-prod-title').textContent=p?'Editar Produto':'Novo Produto';
-  const cats=['Espetos','Bebidas','Porções','Sobremesas','Outros'];
-  document.getElementById('sh-prod-body').innerHTML=`<div class="field"><label>Nome do Produto</label><input id="fp-nome" value="${p?p.nome:''}" placeholder="Ex: Espeto de Frango"></div><div class="form-2col"><div class="field"><label>Preço (R$)</label><input id="fp-preco" type="number" step="0.5" min="0" value="${p?p.preco:''}" placeholder="0,00"></div><div class="field"><label>Categoria</label><select id="fp-cat">${cats.map(c=>`<option${p&&p.cat===c?' selected':''}>${c}</option>`).join('')}</select></div></div><button class="btn btn-fire btn-block" style="margin-top:.5rem" onclick="saveProd('${id||''}')">✓ Salvar Produto</button>${p?`<button class="btn btn-outline btn-block" style="margin-top:.5rem;border-color:var(--red);color:var(--red)" onclick="delProd('${p.id}');closeOv('ov-prod')">Excluir Produto</button>`:''}`;
+function setCat(c) {
+  catA = c;
+  document.querySelectorAll('.chip').forEach(el => el.classList.toggle('on', el.textContent === (c || 'Todos')));
+  renderProdutos();
+}
+function openProdModal(id) {
+  if (!isOwner()) { toast('Acesso restrito!', '🔒'); return }
+  const p = id ? S.produtos.find(x => x.id === id) : null;
+  document.getElementById('sh-prod-title').textContent = p ? 'Editar Produto' : 'Novo Produto';
+  const cats = ['Espetos', 'Bebidas', 'Porções', 'Sobremesas', 'Outros'];
+  document.getElementById('sh-prod-body').innerHTML = `<div class="field"><label>Nome do Produto</label><input id="fp-nome" value="${p ? p.nome : ''}" placeholder="Ex: Espeto de Frango"></div><div class="form-2col"><div class="field"><label>Preço (R$)</label><input id="fp-preco" type="number" step="0.5" min="0" value="${p ? p.preco : ''}" placeholder="0,00"></div><div class="field"><label>Categoria</label><select id="fp-cat">${cats.map(c => `<option${p && p.cat === c ? ' selected' : ''}>${c}</option>`).join('')}</select></div></div><button class="btn btn-fire btn-block" style="margin-top:.5rem" onclick="saveProd('${id || ''}')">✓ Salvar Produto</button>${p ? `<button class="btn btn-outline btn-block" style="margin-top:.5rem;border-color:var(--red);color:var(--red)" onclick="delProd('${p.id}');closeOv('ov-prod')">Excluir Produto</button>` : ''}`;
   openOv('ov-prod');
 }
-function editProd(id){if(!isOwner()){toast('Acesso restrito!','🔒');return}openProdModal(id)}
-function delProd(id){if(!isOwner()){toast('Acesso restrito!','🔒');return}if(!confirm('Remover este produto?'))return;S.produtos=S.produtos.filter(p=>p.id!==id);save();renderProdutos()}
-function saveProd(id){
-  if(!isOwner()){toast('Acesso restrito!','🔒');return}
-  const nome=document.getElementById('fp-nome').value.trim();const preco=parseFloat(document.getElementById('fp-preco').value);const cat=document.getElementById('fp-cat').value;
-  if(!nome||isNaN(preco)||preco<0){toast('Preencha nome e preço!','⚠️');return}
-  if(id){const p=S.produtos.find(x=>x.id===id);if(p){p.nome=nome;p.preco=preco;p.cat=cat}}else S.produtos.push({id:uid(),nome,preco,cat});
-  save();closeOv('ov-prod');renderProdutos();toast('Produto salvo!','✅');
+function editProd(id) { if (!isOwner()) { toast('Acesso restrito!', '🔒'); return } openProdModal(id) }
+async function delProd(id) {
+  if (!isOwner()) { toast('Acesso restrito!', '🔒'); return }
+  if (!confirm('Remover este produto?')) return;
+  await sbDeleteProduto(id);
+  renderProdutos();
+}
+async function saveProd(id) {
+  if (!isOwner()) { toast('Acesso restrito!', '🔒'); return }
+  const nome = document.getElementById('fp-nome').value.trim();
+  const preco = parseFloat(document.getElementById('fp-preco').value);
+  const cat = document.getElementById('fp-cat').value;
+  if (!nome || isNaN(preco) || preco < 0) { toast('Preencha nome e preço!', '⚠️'); return }
+  const prod = { id: id || uid(), nome, preco, cat };
+  await sbSaveProduto(prod);
+  closeOv('ov-prod'); toast('Produto salvo!', '✅');
 }
 
-let dTab='dia';
-function renderDashPage(){
-  const el=document.getElementById('dash-page-content');
-  if(!isOwner()){el.innerHTML=`<div class="access-denied"><div class="ad-icon">🔒</div><div class="ad-title">Acesso Restrito</div><div class="ad-sub">Somente o dono pode visualizar o dashboard.</div></div>`;return}
-  el.innerHTML=`<div class="pg-header"><div><div class="pg-title">Dashboard</div><div class="pg-sub" id="dash-date"></div></div></div><div class="tab-row"><button class="tab-p on" onclick="setTab('dia',this)">Hoje</button><button class="tab-p" onclick="setTab('semana',this)">Semana</button><button class="tab-p" onclick="setTab('mes',this)">Mês</button></div><div id="dash-body"></div>`;
+// ================================================================
+// DASHBOARD
+// ================================================================
+let dTab = 'dia';
+function renderDashPage() {
+  const el = document.getElementById('dash-page-content');
+  if (!isOwner()) { el.innerHTML = `<div class="access-denied"><div class="ad-icon">🔒</div><div class="ad-title">Acesso Restrito</div><div class="ad-sub">Somente o dono pode visualizar o dashboard.</div></div>`; return }
+  el.innerHTML = `<div class="pg-header"><div><div class="pg-title">Dashboard</div><div class="pg-sub" id="dash-date"></div></div></div><div class="tab-row"><button class="tab-p on" onclick="setTab('dia',this)">Hoje</button><button class="tab-p" onclick="setTab('semana',this)">Semana</button><button class="tab-p" onclick="setTab('mes',this)">Mês</button></div><div id="dash-body"></div>`;
   renderDash();
 }
-function setTab(t,el){dTab=t;document.querySelectorAll('.tab-p').forEach(b=>b.classList.remove('on'));el.classList.add('on');renderDash()}
-function renderDash(){
-  if(!document.getElementById('dash-body'))return;
-  const now=new Date();const dd=document.getElementById('dash-date');if(dd)dd.textContent=now.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
-  const fec=S.fechamentos.filter(f=>{const d=new Date(f.data);if(dTab==='dia')return d.toDateString()===now.toDateString();if(dTab==='semana'){const diff=(now-d)/864e5;return diff<7&&diff>=0}return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear()});
-  const total=fec.reduce((s,f)=>s+f.total,0);const qtd=fec.length;const ticket=qtd?total/qtd:0;const maxV=fec.length?Math.max(...fec.map(f=>f.total)):0;
-  let chartD=[];
-  if(dTab==='dia'){for(let h=10;h<=23;h++){const t=fec.filter(f=>new Date(f.data).getHours()===h).reduce((s,f)=>s+f.total,0);chartD.push({l:`${h}h`,v:t})}}
-  else if(dTab==='semana'){const ds=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];for(let d=6;d>=0;d--){const dt=new Date(now);dt.setDate(now.getDate()-d);const t=fec.filter(f=>new Date(f.data).toDateString()===dt.toDateString()).reduce((s,f)=>s+f.total,0);chartD.push({l:ds[dt.getDay()],v:t})}}
-  else{const days=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();for(let d=1;d<=days;d++){const t=fec.filter(f=>{const x=new Date(f.data);return x.getDate()===d&&x.getMonth()===now.getMonth()}).reduce((s,f)=>s+f.total,0);chartD.push({l:`${d}`,v:t})}}
-  const mx=Math.max(...chartD.map(x=>x.v),1);
-  const bars=chartD.map(c=>`<div class="bar-col"><div class="bar-top">${c.v>0?'R$'+c.v.toFixed(0):''}</div><div class="bar${c.v===0?' zero':''}" style="height:${Math.max(2,(c.v/mx)*72)}px"></div><div class="bar-x">${c.l}</div></div>`).join('');
-  const pags={pix:{icon:'💠',label:'PIX',bg:'var(--blue-bg)'},cartao:{icon:'💳',label:'Cartão',bg:'var(--amber-bg)'},dinheiro:{icon:'💵',label:'Dinheiro',bg:'var(--green-bg)'}};
-  const pagRows=Object.entries(pags).map(([k,v])=>{const t=fec.filter(f=>f.pagamento===k).reduce((s,f)=>s+f.total,0);const cnt=fec.filter(f=>f.pagamento===k).length;return`<div class="pag-row"><div class="pag-left"><div class="pag-ico" style="background:${v.bg}">${v.icon}</div><div><div class="pag-name">${v.label}</div><div class="pag-cnt">${cnt} venda${cnt!==1?'s':''}</div></div></div><div class="pag-val">R$${t.toFixed(2)}</div></div>`}).join('');
-  const pq={};fec.forEach(f=>f.itens.forEach(i=>{pq[i.pid]=(pq[i.pid]||0)+i.qty}));
-  const top=Object.entries(pq).sort((a,b)=>b[1]-a[1]).slice(0,5);const maxQ=top.length?top[0][1]:1;
-  const topHTML=top.length?top.map(([id,qty],i)=>{const p=S.produtos.find(x=>x.id===id);return`<div class="rank-item"><div class="rank-n${i===0?' gold':''}">${i+1}</div><div style="flex:1"><div class="rank-name">${p?p.nome:'(removido)'}</div><div class="rbar-wrap"><div class="rbar" style="width:${(qty/maxQ*100).toFixed(0)}%"></div></div></div><div class="rank-qty">${qty} un</div></div>`}).join(''):`<div class="empty" style="padding:1.2rem"><div style="font-size:.85rem">Sem dados ainda</div></div>`;
-  const recentHTML=[...fec].reverse().slice(0,6).map(f=>{const icons={pix:'💠',cartao:'💳',dinheiro:'💵'};return`<div class="recent-item"><div><div class="recent-title">Mesa ${f.mesaId}</div><div class="recent-time">${new Date(f.data).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</div></div><div style="display:flex;align-items:center;gap:.55rem"><span style="font-size:1rem">${icons[f.pagamento]||''}</span><div class="r-val">R$${f.total.toFixed(2)}</div></div></div>`}).join('');
-  document.getElementById('dash-body').innerHTML=`
-    <div class="metric-grid"><div class="metric"><div class="m-lbl">Faturamento</div><div class="m-val fire">R$${total.toFixed(2)}</div><div class="m-sub">${{dia:'Hoje',semana:'Esta semana',mes:'Este mês'}[dTab]}</div></div><div class="metric"><div class="m-lbl">Mesas</div><div class="m-val">${qtd}</div><div class="m-sub">atendidas</div></div><div class="metric"><div class="m-lbl">Ticket Médio</div><div class="m-val">R$${ticket.toFixed(2)}</div><div class="m-sub">por mesa</div></div><div class="metric"><div class="m-lbl">Maior Mesa</div><div class="m-val">${maxV>0?'R$'+maxV.toFixed(2):'—'}</div><div class="m-sub">recorde</div></div></div>
-    <div class="chart-card"><div class="chart-lbl">Faturamento por ${dTab==='dia'?'Hora':dTab==='semana'?'Dia':'Dia do Mês'}</div><div class="bars">${bars}</div></div>
+function setTab(t, el) { dTab = t; document.querySelectorAll('.tab-p').forEach(b => b.classList.remove('on')); el.classList.add('on'); renderDash() }
+function renderDash() {
+  if (!document.getElementById('dash-body')) return;
+  const now = new Date();
+  const dd = document.getElementById('dash-date');
+  if (dd) dd.textContent = now.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+
+  // Fechamentos do Supabase usam snake_case: mesa_id, total, pagamento, itens, data
+  const fec = S.fechamentos.filter(f => {
+    const d = new Date(f.data);
+    if (dTab === 'dia') return d.toDateString() === now.toDateString();
+    if (dTab === 'semana') { const diff = (now - d) / 864e5; return diff < 7 && diff >= 0 }
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  });
+
+  const total = fec.reduce((s, f) => s + f.total, 0);
+  const qtd = fec.length;
+  const ticket = qtd ? total / qtd : 0;
+  const maxV = fec.length ? Math.max(...fec.map(f => f.total)) : 0;
+
+  let chartD = [];
+  if (dTab === 'dia') {
+    for (let h = 10; h <= 23; h++) { const t = fec.filter(f => new Date(f.data).getHours() === h).reduce((s, f) => s + f.total, 0); chartD.push({ l: `${h}h`, v: t }) }
+  } else if (dTab === 'semana') {
+    const ds = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    for (let d = 6; d >= 0; d--) { const dt = new Date(now); dt.setDate(now.getDate() - d); const t = fec.filter(f => new Date(f.data).toDateString() === dt.toDateString()).reduce((s, f) => s + f.total, 0); chartD.push({ l: ds[dt.getDay()], v: t }) }
+  } else {
+    const days = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    for (let d = 1; d <= days; d++) { const t = fec.filter(f => { const x = new Date(f.data); return x.getDate() === d && x.getMonth() === now.getMonth() }).reduce((s, f) => s + f.total, 0); chartD.push({ l: `${d}`, v: t }) }
+  }
+
+  const mx = Math.max(...chartD.map(x => x.v), 1);
+  const bars = chartD.map(c => `<div class="bar-col"><div class="bar-top">${c.v > 0 ? 'R$' + c.v.toFixed(0) : ''}</div><div class="bar${c.v === 0 ? ' zero' : ''}" style="height:${Math.max(2, (c.v / mx) * 72)}px"></div><div class="bar-x">${c.l}</div></div>`).join('');
+
+  const pags = { pix: { icon: '💠', label: 'PIX', bg: 'var(--blue-bg)' }, cartao: { icon: '💳', label: 'Cartão', bg: 'var(--amber-bg)' }, dinheiro: { icon: '💵', label: 'Dinheiro', bg: 'var(--green-bg)' } };
+  const pagRows = Object.entries(pags).map(([k, v]) => {
+    const t = fec.filter(f => f.pagamento === k).reduce((s, f) => s + f.total, 0);
+    const cnt = fec.filter(f => f.pagamento === k).length;
+    return `<div class="pag-row"><div class="pag-left"><div class="pag-ico" style="background:${v.bg}">${v.icon}</div><div><div class="pag-name">${v.label}</div><div class="pag-cnt">${cnt} venda${cnt !== 1 ? 's' : ''}</div></div></div><div class="pag-val">R$${t.toFixed(2)}</div></div>`;
+  }).join('');
+
+  const pq = {};
+  fec.forEach(f => (f.itens || []).forEach(i => { pq[i.pid] = (pq[i.pid] || 0) + i.qty }));
+  const top = Object.entries(pq).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const maxQ = top.length ? top[0][1] : 1;
+  const topHTML = top.length ? top.map(([id, qty], i) => {
+    const p = S.produtos.find(x => x.id === id);
+    return `<div class="rank-item"><div class="rank-n${i === 0 ? ' gold' : ''}">${i + 1}</div><div style="flex:1"><div class="rank-name">${p ? p.nome : '(removido)'}</div><div class="rbar-wrap"><div class="rbar" style="width:${(qty / maxQ * 100).toFixed(0)}%"></div></div></div><div class="rank-qty">${qty} un</div></div>`;
+  }).join('') : `<div class="empty" style="padding:1.2rem"><div style="font-size:.85rem">Sem dados ainda</div></div>`;
+
+  const recentHTML = [...fec].slice(0, 6).map(f => {
+    const icons = { pix: '💠', cartao: '💳', dinheiro: '💵' };
+    const mesaLabel = f.mesa_id || f.mesaId;
+    return `<div class="recent-item"><div><div class="recent-title">Mesa ${mesaLabel}</div><div class="recent-time">${new Date(f.data).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div></div><div style="display:flex;align-items:center;gap:.55rem"><span style="font-size:1rem">${icons[f.pagamento] || ''}</span><div class="r-val">R$${f.total.toFixed(2)}</div></div></div>`;
+  }).join('');
+
+  document.getElementById('dash-body').innerHTML = `
+    <div class="metric-grid">
+      <div class="metric"><div class="m-lbl">Faturamento</div><div class="m-val fire">R$${total.toFixed(2)}</div><div class="m-sub">${{ dia: 'Hoje', semana: 'Esta semana', mes: 'Este mês' }[dTab]}</div></div>
+      <div class="metric"><div class="m-lbl">Mesas</div><div class="m-val">${qtd}</div><div class="m-sub">atendidas</div></div>
+      <div class="metric"><div class="m-lbl">Ticket Médio</div><div class="m-val">R$${ticket.toFixed(2)}</div><div class="m-sub">por mesa</div></div>
+      <div class="metric"><div class="m-lbl">Maior Mesa</div><div class="m-val">${maxV > 0 ? 'R$' + maxV.toFixed(2) : '—'}</div><div class="m-sub">recorde</div></div>
+    </div>
+    <div class="chart-card"><div class="chart-lbl">Faturamento por ${dTab === 'dia' ? 'Hora' : dTab === 'semana' ? 'Dia' : 'Dia do Mês'}</div><div class="bars">${bars}</div></div>
     <div class="card" style="margin-bottom:.6rem"><div style="padding:.75rem 1rem .2rem"><div class="sec-title">Por Pagamento</div></div>${pagRows}</div>
     <div class="card" style="margin-bottom:.6rem"><div style="padding:.75rem 1rem .2rem"><div class="sec-title">🏆 Top Produtos</div></div><div style="padding:0 .5rem .5rem">${topHTML}</div></div>
-    ${fec.length?`<div class="card" style="margin-bottom:.6rem"><div style="padding:.75rem 1rem .2rem"><div class="sec-title">Últimas Vendas</div></div>${recentHTML}</div>`:''}`;
+    ${fec.length ? `<div class="card" style="margin-bottom:.6rem"><div style="padding:.75rem 1rem .2rem"><div class="sec-title">Últimas Vendas</div></div>${recentHTML}</div>` : ''}`;
 }
 
-function renderConfigPage(){
-  const el=document.getElementById('config-page-content');
-  if(!isOwner()){el.innerHTML=`<div class="access-denied"><div class="ad-icon">🔒</div><div class="ad-title">Acesso Restrito</div><div class="ad-sub">Somente o dono pode acessar as configurações.</div></div>`;return}
-  el.innerHTML=`<div class="pg-header"><div><div class="pg-title">Configurações</div><div class="pg-sub">Acesso e sistema</div></div></div>
+// ================================================================
+// CONFIGURAÇÕES
+// ================================================================
+function renderConfigPage() {
+  const el = document.getElementById('config-page-content');
+  if (!isOwner()) { el.innerHTML = `<div class="access-denied"><div class="ad-icon">🔒</div><div class="ad-title">Acesso Restrito</div><div class="ad-sub">Somente o dono pode acessar as configurações.</div></div>`; return }
+  el.innerHTML = `<div class="pg-header"><div><div class="pg-title">Configurações</div><div class="pg-sub">Acesso e sistema</div></div></div>
     <div class="sec-title">Senhas de Acesso</div>
     <div class="cfg-section">
       <div class="cfg-row"><div><div class="cfg-label">👑 Senha do Dono</div><div class="cfg-sub">Acesso total ao sistema</div></div><button class="btn btn-outline btn-xs" onclick="abrirSenha('dono')">Alterar</button></div>
@@ -545,21 +767,35 @@ function renderConfigPage(){
       <div class="cfg-row"><div><div class="cfg-label">🗑️ Limpar Histórico de Vendas</div><div class="cfg-sub">Remove todos os fechamentos</div></div><button class="btn btn-danger btn-xs" onclick="limparFechamentos()">Limpar</button></div>
     </div>`;
 }
-function abrirSenha(role){
-  document.getElementById('sh-senha-title').textContent='Alterar Senha — '+(role==='dono'?'Dono':'Funcionário');
-  document.getElementById('sh-senha-body').innerHTML=`<div class="field"><label>Senha Atual do Dono</label><input type="password" id="s-atual" placeholder="Confirme sua senha atual"></div><div class="field"><label>Nova Senha</label><input type="password" id="s-nova" placeholder="Mínimo 4 caracteres"></div><div class="field"><label>Confirmar Nova Senha</label><input type="password" id="s-conf" placeholder="Repita a nova senha"></div><div class="login-err" id="s-err"></div><button class="btn btn-fire btn-block" onclick="salvarSenha('${role}')">✓ Salvar Senha</button>`;
+function abrirSenha(role) {
+  document.getElementById('sh-senha-title').textContent = 'Alterar Senha — ' + (role === 'dono' ? 'Dono' : 'Funcionário');
+  document.getElementById('sh-senha-body').innerHTML = `<div class="field"><label>Senha Atual do Dono</label><input type="password" id="s-atual" placeholder="Confirme sua senha atual"></div><div class="field"><label>Nova Senha</label><input type="password" id="s-nova" placeholder="Mínimo 4 caracteres"></div><div class="field"><label>Confirmar Nova Senha</label><input type="password" id="s-conf" placeholder="Repita a nova senha"></div><div class="login-err" id="s-err"></div><button class="btn btn-fire btn-block" onclick="salvarSenha('${role}')">✓ Salvar Senha</button>`;
   openOv('ov-senha');
 }
-function salvarSenha(role){
-  const atual=document.getElementById('s-atual').value;const nova=document.getElementById('s-nova').value;const conf=document.getElementById('s-conf').value;const err=document.getElementById('s-err');
-  if(atual!==S.senhas.dono){err.textContent='Senha atual incorreta.';return}
-  if(nova.length<4){err.textContent='Nova senha deve ter pelo menos 4 caracteres.';return}
-  if(nova!==conf){err.textContent='As senhas não coincidem.';return}
-  S.senhas[role]=nova;save();closeOv('ov-senha');toast(`Senha alterada com sucesso!`,'✅');renderConfigPage();
+async function salvarSenha(role) {
+  const atual = document.getElementById('s-atual').value;
+  const nova = document.getElementById('s-nova').value;
+  const conf = document.getElementById('s-conf').value;
+  const err = document.getElementById('s-err');
+  if (atual !== S.senhas.dono) { err.textContent = 'Senha atual incorreta.'; return }
+  if (nova.length < 4) { err.textContent = 'Nova senha deve ter pelo menos 4 caracteres.'; return }
+  if (nova !== conf) { err.textContent = 'As senhas não coincidem.'; return }
+  S.senhas[role] = nova;
+  await sbSaveSenhas();
+  closeOv('ov-senha'); toast('Senha alterada com sucesso!', '✅'); renderConfigPage();
 }
-function limparFechamentos(){if(!confirm('Apagar todo o histórico de vendas?'))return;S.fechamentos=[];save();renderConfigPage();toast('Histórico apagado.','🗑️')}
+async function limparFechamentos() {
+  if (!confirm('Apagar todo o histórico de vendas?')) return;
+  await sbLimparFechamentos();
+  S.fechamentos = [];
+  renderConfigPage(); toast('Histórico apagado.', '🗑️');
+}
 
+// ================================================================
+// INICIAR
+// ================================================================
 renderMesas();
+initSupabase();
 </script>
 </body>
 </html>
