@@ -245,7 +245,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     </div>
     <div style="display:flex;align-items:center;gap:.5rem">
       <div class="mesa-pill" id="mesa-pill-wrap" style="display:none">
-        🪑<input type="number" id="numMesas" value="12" min="1" max="60" onchange="renderMesas()">mesas
+        🪑<input type="number" id="numMesas" value="12" min="1" max="60" onchange="setNumMesas(parseInt(this.value)||12)">mesas
       </div>
       <div class="user-pill" onclick="logout()" id="user-pill" style="display:none">
         <div class="user-dot" id="user-dot"></div>
@@ -346,8 +346,21 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
 // STATE
 // ================================================================
 let currentRole = null;
-let S = { produtos: [], mesas: {}, fechamentos: [], senhas: { dono: '1234', funcionario: '0000' } };
+let S = { produtos: [], mesas: {}, fechamentos: [], senhas: { dono: '1234', funcionario: '0000' }, numMesas: 12 };
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8) }
+// Sempre lê numMesas do state — não depende do input estar visível
+function getNumMesas() {
+  const el = document.getElementById('numMesas');
+  if (el && el.value) S.numMesas = parseInt(el.value) || 12;
+  return S.numMesas;
+}
+async function setNumMesas(n) {
+  S.numMesas = n;
+  const el = document.getElementById('numMesas');
+  if (el) el.value = n;
+  await sb.from('config').upsert({ id: 'numMesas', dados: { value: n } });
+  renderMesas();
+}
 
 // ================================================================
 // LOADING
@@ -377,6 +390,16 @@ async function initSupabase() {
     if (cfgData) S.senhas = cfgData.dados;
     else await sb.from('config').insert({ id: 'senhas', dados: S.senhas });
 
+    // --- numMesas ---
+    const { data: nmData } = await sb.from('config').select('dados').eq('id', 'numMesas').single();
+    if (nmData) {
+      S.numMesas = nmData.dados.value || 12;
+      const el = document.getElementById('numMesas');
+      if (el) el.value = S.numMesas;
+    } else {
+      await sb.from('config').upsert({ id: 'numMesas', dados: { value: S.numMesas } });
+    }
+
     // --- Produtos ---
     const { data: prods, error: eprod } = await sb.from('produtos').select('*');
     if (eprod) throw eprod;
@@ -395,6 +418,22 @@ async function initSupabase() {
     S.fechamentos = fec || [];
 
     // ---- REALTIME: usando broadcast channel único por tabela ----
+    // Config (numMesas)
+    sb.channel('db-config')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'config' }, async (payload) => {
+        if (payload.new && payload.new.id === 'numMesas') {
+          S.numMesas = payload.new.dados.value || 12;
+          const el = document.getElementById('numMesas');
+          if (el) el.value = S.numMesas;
+          renderMesas();
+        }
+        if (payload.new && payload.new.id === 'senhas') {
+          S.senhas = payload.new.dados;
+        }
+      }).subscribe((status) => {
+        if (status === 'SUBSCRIBED') console.log('✅ Realtime config ativo');
+      });
+
     // Produtos
     sb.channel('db-produtos')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'produtos' }, async () => {
@@ -589,7 +628,7 @@ function calcTotal(pedidos) {
   }, 0);
 }
 function renderMesas() {
-  const n = parseInt(document.getElementById('numMesas')?.value || 12);
+  const n = getNumMesas();
   const g = document.getElementById('mesas-grid'); g.innerHTML = ''; let ativas = 0;
   for (let i = 1; i <= n; i++) {
     const m = getMesa(i); const tot = calcTotal(m.pedidos || []); const ocp = m.status === 'ocupada' && m.pedidos.length > 0;
@@ -626,16 +665,22 @@ async function addItem(mId, pId) {
   const m = getMesa(mId); m.status = 'ocupada';
   const ex = m.pedidos.find(p => p.pid === pId);
   if (ex) ex.qty++; else m.pedidos.push({ pid: pId, qty: 1 });
-  await sbSaveMesa(mId, m);
+  // Atualiza local imediatamente (não espera o realtime voltar)
+  S.mesas[String(mId)] = { status: m.status, pedidos: [...m.pedidos] };
   renderMesaSheet(mId); renderMesas();
+  // Salva no banco (o realtime vai atualizar o outro dispositivo)
+  await sbSaveMesa(mId, m);
 }
 async function chgQty(mId, pId, d) {
   const m = getMesa(mId); const p = m.pedidos.find(x => x.pid === pId); if (!p) return;
   p.qty += d;
   if (p.qty <= 0) m.pedidos = m.pedidos.filter(x => x.pid !== pId);
   if (m.pedidos.length === 0) m.status = 'livre';
-  await sbSaveMesa(mId, m);
+  // Atualiza local imediatamente
+  S.mesas[String(mId)] = { status: m.status, pedidos: [...m.pedidos] };
   renderMesaSheet(mId); renderMesas();
+  // Salva no banco
+  await sbSaveMesa(mId, m);
 }
 
 // ================================================================
